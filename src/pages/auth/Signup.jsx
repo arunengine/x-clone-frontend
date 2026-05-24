@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { apiFetch } from "../../utils/api";
 
 export default function Signup() {
@@ -10,6 +10,7 @@ export default function Signup() {
     password: "",
   });
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +25,7 @@ export default function Signup() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to create account");
 
-      console.log("Signup success! JWT Cookie is set:", data);
+      navigate("/"); // Redirect to Home after successful signup
     } catch (err) {
       setError(err.message);
     }
