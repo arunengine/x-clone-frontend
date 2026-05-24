@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { apiFetch } from "../../utils/api";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -13,8 +14,7 @@ export default function Login() {
     e.preventDefault();
     setError(null);
     try {
-      // Proxy forwards this to backend login
-      const res = await fetch("/api/auth/login", {
+      const res = await apiFetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

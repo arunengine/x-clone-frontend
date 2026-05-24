@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { apiFetch } from "../../utils/api";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -14,8 +15,7 @@ export default function Signup() {
     e.preventDefault();
     setError(null);
     try {
-      // 1. Connection Point! Vite proxy forwards this to localhost:5000/api/auth/signup
-      const res = await fetch("/api/auth/signup", {
+      const res = await apiFetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -25,7 +25,6 @@ export default function Signup() {
       if (!res.ok) throw new Error(data.error || "Failed to create account");
 
       console.log("Signup success! JWT Cookie is set:", data);
-      // Usually, we would redirect the user or update global state here
     } catch (err) {
       setError(err.message);
     }
@@ -54,3 +53,4 @@ export default function Signup() {
     </div>
   );
 }
+

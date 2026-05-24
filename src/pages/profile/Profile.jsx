@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { apiFetch } from "../../utils/api";
 
 export default function Profile() {
   const { username } = useParams();
@@ -10,7 +11,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/auth/me").then(res=>res.json()).then(data=>{
+    apiFetch("/api/auth/me").then(res=>res.json()).then(data=>{
       if(data._id) {
          setMyUserId(data._id);
          setMyUsername(data.username);
@@ -21,14 +22,14 @@ export default function Profile() {
   useEffect(() => {
     setLoading(true);
     // Fetch profile stats
-    fetch(`/api/users/profile/${username}`)
+    apiFetch(`/api/users/profile/${username}`)
       .then(res => res.json())
       .then(data => {
         if(data._id) setProfile(data);
       });
 
     // Fetch user's posts
-    fetch(`/api/posts/user/${username}`)
+    apiFetch(`/api/posts/user/${username}`)
       .then(res => res.json())
       .then(data => {
         if(data.posts) setPosts(data.posts);
@@ -38,7 +39,7 @@ export default function Profile() {
 
   const handleFollow = async () => {
     try {
-      const res = await fetch(`/api/users/follow/${profile._id}`, {
+      const res = await apiFetch(`/api/users/follow/${profile._id}`, {
         method: "POST"
       });
       if(res.ok) {

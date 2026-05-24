@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { apiFetch } from "../../utils/api";
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -12,7 +13,7 @@ export default function Home() {
 
   useEffect(() => {
     // 1. Verify Authentication 
-    fetch("/api/auth/me")
+    apiFetch("/api/auth/me")
       .then(res => {
          if (!res.ok) throw new Error("Not logged in");
          return res.json();
@@ -33,7 +34,7 @@ export default function Home() {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch("/api/posts/all");
+      const res = await apiFetch("/api/posts/all");
       const data = await res.json();
       if(res.ok) setPosts(data);
     } catch (e) {
@@ -45,7 +46,7 @@ export default function Home() {
     e.preventDefault();
     if(!text) return;
     try {
-      const res = await fetch("/api/posts/create", {
+      const res = await apiFetch("/api/posts/create", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({text})
@@ -61,7 +62,7 @@ export default function Home() {
 
   const handleLikePost = async (postId) => {
     try {
-      const res = await fetch(`/api/posts/like/${postId}`, {
+      const res = await apiFetch(`/api/posts/like/${postId}`, {
         method: "POST"
       });
       if(res.ok) {
@@ -76,7 +77,7 @@ export default function Home() {
       e.preventDefault();
       if(!commentText) return;
       try {
-          const res = await fetch(`/api/posts/comment/${postId}`, {
+          const res = await apiFetch(`/api/posts/comment/${postId}`, {
               method: "POST",
               headers: {"Content-Type": "application/json"},
               body: JSON.stringify({text: commentText})
@@ -92,7 +93,7 @@ export default function Home() {
   };
 
   const handleLogout = async () => {
-     await fetch("/api/auth/logout", { method: "POST"});
+     await apiFetch("/api/auth/logout", { method: "POST"});
      navigate("/login");
   }
 
