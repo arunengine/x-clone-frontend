@@ -102,65 +102,81 @@ export default function Home() {
       {/* Sidebar (Left) */}
       <div className="sidebar">
          <h2>X Clone</h2>
-         <Link to="/" style={{marginTop: "20px", fontSize: "20px", fontWeight: "bold", display: "block"}}>Home</Link>
-         {myUsername && <Link to={`/profile/${myUsername}`} style={{marginTop: "15px", fontSize: "20px", fontWeight: "bold", display: "block"}}>Profile</Link>}
-         <button onClick={handleLogout} style={{marginTop: "auto", marginBottom: "20px", color: "var(--text-secondary)", fontSize: "16px", textAlign: "left"}}>Log out</button>
+         <Link to="/" className="sidebar-link">🏠 Home</Link>
+         {myUsername && <Link to={`/profile/${myUsername}`} className="sidebar-link">👤 Profile</Link>}
+         <button onClick={handleLogout} className="sidebar-btn">🚪 Log out</button>
       </div>
 
       {/* Main Feed (Center) */}
       <div className="main-content">
-         <h3 style={{padding: "15px", borderBottom: "1px solid var(--border-color)", position: "sticky", top: 0, backgroundColor: "rgba(0,0,0,0.8)", backdropFilter: "blur(10px)"}}>Home</h3>
+         <div className="main-header">
+            <h3>Home</h3>
+         </div>
          
          {/* Create Post Section */}
-         <div style={{padding: "15px", borderBottom: "1px solid var(--border-color)", display: "flex", flexDirection: "column"}}>
+         <div className="create-post-container">
             <textarea 
                value={text} 
                onChange={(e) => setText(e.target.value)} 
                placeholder="What is happening?!" 
-               style={{border: "none", resize: "none", height: "80px", outline: "none", fontSize: "20px", background: "transparent"}}
+               className="create-post-textarea"
             />
-            <div style={{display: "flex", justifyContent: "flex-end", marginTop: "10px"}}>
+            <div className="create-post-footer">
                <button className="btn-primary" onClick={handlePost} disabled={!text}>Post</button>
             </div>
          </div>
 
          {/* Posts List Section */}
          {posts.length === 0 ? (
-            <p style={{padding: "15px", textAlign:"center", color: "var(--text-secondary)"}}>No posts yet. Say something!</p>
+            <p style={{padding: "20px", textAlign:"center", color: "var(--text-secondary)"}}>No posts yet. Say something!</p>
          ) : posts.map(post => (
-            <div key={post._id} style={{padding: "20px", borderBottom: "1px solid var(--border-color)"}}>
+            <div key={post._id} className="post-card">
                <div style={{display: "flex", gap: "12px"}}>
-                  <Link to={`/profile/${post.user.username}`} style={{width: "48px", height: "48px", backgroundColor: "#333", borderRadius: "50%", flexShrink: 0, display: "block"}} />
+                  <Link to={`/profile/${post.user.username}`} className="post-avatar" />
                   <div style={{width: "100%"}}>
-                     <Link to={`/profile/${post.user.username}`} style={{fontWeight: "bold", marginRight: "5px"}}>{post.user.fullname}</Link>
-                     <Link to={`/profile/${post.user.username}`} style={{color: "var(--text-secondary)"}}>@{post.user.username}</Link>
-                     <p style={{marginTop: "8px", fontSize: "15px", lineHeight: "1.5"}}>{post.text}</p>
+                     <div className="post-header">
+                        <Link to={`/profile/${post.user.username}`} className="post-author">{post.user.fullname}</Link>
+                        <Link to={`/profile/${post.user.username}`} className="post-username">@{post.user.username}</Link>
+                     </div>
+                     <p className="post-text">{post.text}</p>
                      
-                     <div style={{display:"flex", gap:"30px", marginTop:"12px", color: "var(--text-secondary)", userSelect: "none"}}>
-                        <span onClick={() => setActiveCommentPost(activeCommentPost === post._id ? null : post._id)} style={{cursor: "pointer"}}>💬 {post.comments.length}</span>
-                        <span 
+                     <div className="interaction-bar">
+                        <div 
+                           onClick={() => setActiveCommentPost(activeCommentPost === post._id ? null : post._id)} 
+                           className="interaction-icon"
+                        >
+                           💬 {post.comments.length}
+                        </div>
+                        <div 
                            onClick={() => handleLikePost(post._id)}
-                           style={{cursor: "pointer", color: post.likes.includes(userId) ? "#f91880" : "inherit"}}
+                           className={`interaction-icon ${post.likes.includes(userId) ? "liked" : ""}`}
                         >
                            ❤️ {post.likes.length}
-                        </span>
+                        </div>
                      </div>
 
                      {/* Hidden Dynamic Comment Section */}
                      {activeCommentPost === post._id && (
-                         <form onSubmit={(e) => handleComment(e, post._id)} style={{marginTop: "15px", display:"flex", gap:"10px"}}>
-                             <input autoFocus value={commentText} onChange={(e)=>setCommentText(e.target.value)} type="text" placeholder="Post your reply..." style={{flex: 1, padding: "10px 15px", borderRadius: "20px", border: "1px solid var(--border-color)", fontSize: "15px"}} />
+                         <form onSubmit={(e) => handleComment(e, post._id)} className="comment-form">
+                             <input 
+                                 autoFocus 
+                                 value={commentText} 
+                                 onChange={(e)=>setCommentText(e.target.value)} 
+                                 type="text" 
+                                 placeholder="Post your reply..." 
+                                 className="comment-input" 
+                             />
                              <button type="submit" disabled={!commentText} className="btn-primary" style={{padding: "8px 18px"}}>Reply</button>
                          </form>
                      )}
 
                      {/* Inline Display of Comments */}
                      {post.comments.length > 0 && activeCommentPost === post._id && (
-                         <div style={{marginTop: "15px", borderTop: "1px solid var(--border-color)", paddingTop: "15px"}}>
+                         <div className="comments-list">
                              {post.comments.map(c => (
-                                 <div key={c._id} style={{marginBottom: "15px", fontSize: "14px", display: "flex", gap: "8px"}}>
-                                     <div style={{width: "30px", height: "30px", backgroundColor: "#444", borderRadius: "50%", flexShrink: 0}} />
-                                     <div>
+                                 <div key={c._id} className="comment-item">
+                                     <div className="comment-avatar" />
+                                     <div className="comment-body">
                                         <strong>{c.user.fullname}</strong> <span style={{color: "var(--text-secondary)"}}>@{c.user.username}</span>
                                         <p style={{marginTop: "2px"}}>{c.text}</p>
                                      </div>
