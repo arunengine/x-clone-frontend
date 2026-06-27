@@ -8,7 +8,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       "/api": {
-        target: "https://x-clone-backend-xhr1.onrender.com",
+        target: "http://localhost:5000",
         changeOrigin: true,
       },
     },
