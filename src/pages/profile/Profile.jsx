@@ -371,30 +371,41 @@ export default function Profile() {
               </p>
             ) : (
               <div className="modal-user-list">
-                {userList.map(user => {
-                  const isOwnUser = user._id === myUserId;
-                  const isFollowingUser = myFollowing.some(fid => fid.toString() === user._id.toString());
+                {userList.map((user, idx) => {
+                  if (!user) return null;
+                  
+                  const userId = user._id || (typeof user === 'string' ? user : null);
+                  if (!userId) return null;
+
+                  const isOwnUser = userId.toString() === myUserId?.toString();
+                  const isFollowingUser = myFollowing.some(fid => fid && fid.toString() === userId.toString());
+                  
+                  const userKey = user._id ? user._id : `unpopulated-${idx}`;
+                  const username = user.username || `user_${userId.toString().slice(-4)}`;
+                  const fullname = user.fullname || `User ${userId.toString().slice(-4)}`;
                   
                   return (
-                    <div key={user._id} className="modal-user-item">
+                    <div key={userKey} className="modal-user-item">
                       <div 
                         onClick={() => {
                           setShowModal(false);
-                          navigate(`/profile/${user.username}`);
+                          if (user.username) {
+                            navigate(`/profile/${user.username}`);
+                          }
                         }} 
                         className="modal-user-info"
                       >
                         <div className="modal-avatar" style={{ backgroundImage: `url(${getAvatarUrl(user)})` }} />
                         <div className="modal-user-details">
-                          <span className="modal-fullname">{user.fullname}</span>
-                          <span className="modal-username">@{user.username}</span>
+                          <span className="modal-fullname">{fullname}</span>
+                          <span className="modal-username">@{username}</span>
                           {user.bio && user.bio.trim() && <p className="modal-bio">{user.bio}</p>}
                         </div>
                       </div>
                       
                       {!isOwnUser && myUserId && (
                         <button 
-                          onClick={() => handleFollowModalUser(user._id)}
+                          onClick={() => handleFollowModalUser(userId)}
                           className="btn-primary"
                           style={{
                             padding: "6px 14px",
