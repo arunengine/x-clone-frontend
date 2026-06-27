@@ -627,3 +627,142 @@ input, textarea {
   color: var(--error-color);
   background-color: rgba(244, 33, 46, 0.1);
 }
+
+/* Modal Overlay and Container */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(91, 112, 131, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  background-color: var(--bg-color);
+  width: 100%;
+  max-width: 500px;
+  max-height: 80vh;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.modal-close-btn:hover {
+  background-color: var(--bg-hover);
+}
+
+.modal-content {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-user-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modal-user-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.modal-user-info {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  cursor: pointer;
+}
+
+.modal-user-info:hover .modal-fullname {
+  text-decoration: underline;
+}
+
+.modal-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  background-color: #334155;
+}
+
+.modal-user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modal-fullname {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 15px;
+}
+
+.modal-username {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.modal-bio {
+  color: var(--text-primary);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* Clicking statistic counter */
+.profile-stats span {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.profile-stats span:hover {
+  opacity: 0.8;
+}

@@ -18,9 +18,14 @@ export default function Profile() {
   const [posts, setPosts] = useState([]);
   const [myUserId, setMyUserId] = useState(null);
   const [myUsername, setMyUsername] = useState("");
+  const [myFollowing, setMyFollowing] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("posts"); // "posts" or "likes"
   const [suggestedUsers, setSuggestedUsers] = useState([]);
+
+  // Modal states
+  const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState("followers"); // "followers" or "following"
 
   // Comment states
   const [activeCommentPost, setActiveCommentPost] = useState(null);
@@ -39,6 +44,7 @@ export default function Profile() {
       if(data._id) {
          setMyUserId(data._id);
          setMyUsername(data.username);
+         setMyFollowing(data.following || []);
       }
     })
     .catch(() => {
@@ -53,6 +59,7 @@ export default function Profile() {
     setProfile(null);
     setPosts([]);
     setActiveCommentPost(null);
+    setShowModal(false);
     
     apiFetch(`/api/users/profile/${username}`)
       .then(res => {
@@ -97,11 +104,32 @@ export default function Profile() {
         method: "POST"
       });
       if (res.ok) {
-        fetchSuggested();
-        // Refresh profile if we followed/unfollowed the current profile user
-        if (profile && profile._id === id) {
-          refreshProfile();
+        if (myFollowing.some(fid => fid.toString() === id.toString())) {
+          setMyFollowing(myFollowing.filter(fid => fid.toString() !== id.toString()));
+        } else {
+          setMyFollowing([...myFollowing, id]);
         }
+        fetchSuggested();
+        refreshProfile();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleFollowModalUser = async (id) => {
+    try {
+      const res = await apiFetch(`/api/users/follow/${id}`, {
+        method: "POST"
+      });
+      if (res.ok) {
+        if (myFollowing.some(fid => fid.toString() === id.toString())) {
+          setMyFollowing(myFollowing.filter(fid => fid.toString() !== id.toString()));
+        } else {
+          setMyFollowing([...myFollowing, id]);
+        }
+        fetchSuggested();
+        refreshProfile();
       }
     } catch (e) {
       console.error(e);
@@ -127,14 +155,13 @@ export default function Profile() {
         method: "POST"
       });
       if (res.ok) {
-        const followers = profile.followers || [];
-        const isFollowing = followers.includes(myUserId);
-        const updatedFollowers = isFollowing 
-            ? followers.filter(id => id !== myUserId)
-            : [...followers, myUserId];
-            
-        setProfile({ ...profile, followers: updatedFollowers });
+        if (myFollowing.some(fid => fid.toString() === profile._id.toString())) {
+          setMyFollowing(myFollowing.filter(fid => fid.toString() !== profile._id.toString()));
+        } else {
+          setMyFollowing([...myFollowing, profile._id]);
+        }
         fetchSuggested();
+        refreshProfile();
       }
     } catch(e) { console.error(e) }
   };
@@ -325,6 +352,73 @@ export default function Profile() {
     );
   };
 
+  const renderUserModal = () => {
+    if (!showModal) return null;
+    const userList = modalType === "followers" ? (profile.followers || []) : (profile.following || []);
+    const title = modalType === "followers" ? "Followers" : "Following";
+
+    return (
+      <div className="modal-overlay" onClick={() => setShowModal(false)}>
+        <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-header">
+            <h3>{title}</h3>
+            <button className="modal-close-btn" onClick={() => setShowModal(false)} style={{ fontSize: "16px", fontWeight: "bold" }}>✕</button>
+          </div>
+          <div className="modal-content">
+            {userList.length === 0 ? (
+              <p style={{ textAlign: "center", color: "var(--text-secondary)", padding: "20px 0" }}>
+                No {modalType} yet.
+              </p>
+            ) : (
+              <div className="modal-user-list">
+                {userList.map(user => {
+                  const isOwnUser = user._id === myUserId;
+                  const isFollowingUser = myFollowing.some(fid => fid.toString() === user._id.toString());
+                  
+                  return (
+                    <div key={user._id} className="modal-user-item">
+                      <div 
+                        onClick={() => {
+                          setShowModal(false);
+                          navigate(`/profile/${user.username}`);
+                        }} 
+                        className="modal-user-info"
+                      >
+                        <div className="modal-avatar" style={{ backgroundImage: `url(${getAvatarUrl(user)})` }} />
+                        <div className="modal-user-details">
+                          <span className="modal-fullname">{user.fullname}</span>
+                          <span className="modal-username">@{user.username}</span>
+                          {user.bio && user.bio.trim() && <p className="modal-bio">{user.bio}</p>}
+                        </div>
+                      </div>
+                      
+                      {!isOwnUser && myUserId && (
+                        <button 
+                          onClick={() => handleFollowModalUser(user._id)}
+                          className="btn-primary"
+                          style={{
+                            padding: "6px 14px",
+                            fontSize: "13px",
+                            fontWeight: "700",
+                            backgroundColor: isFollowingUser ? "transparent" : "var(--text-primary)",
+                            color: isFollowingUser ? "var(--text-primary)" : "var(--bg-color)",
+                            border: isFollowingUser ? "1px solid var(--border-color)" : "none"
+                          }}
+                        >
+                          {isFollowingUser ? "Unfollow" : "Follow"}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) return <div style={{padding: "20px", textAlign: "center", color: "var(--text-secondary)"}}>Loading...</div>;
   if (!profile) return <div style={{padding: "20px", textAlign: "center", color: "var(--text-secondary)"}}>User not found</div>;
 
@@ -356,11 +450,11 @@ export default function Profile() {
                onClick={handleFollow}
                className="btn-outline" 
                style={{
-                 backgroundColor: (profile.followers || []).includes(myUserId) ? "transparent" : "var(--text-primary)", 
-                 color: (profile.followers || []).includes(myUserId) ? "var(--text-primary)" : "var(--bg-color)"
+                 backgroundColor: myFollowing.some(fid => fid.toString() === profile._id.toString()) ? "transparent" : "var(--text-primary)", 
+                 color: myFollowing.some(fid => fid.toString() === profile._id.toString()) ? "var(--text-primary)" : "var(--bg-color)"
                }}
              >
-               {(profile.followers || []).includes(myUserId) ? "Unfollow" : "Follow"}
+               {myFollowing.some(fid => fid.toString() === profile._id.toString()) ? "Unfollow" : "Follow"}
              </button>
           )}
         </div>
@@ -375,8 +469,12 @@ export default function Profile() {
           {profile.bio && <p className="profile-bio">{profile.bio}</p>}
 
           <div className="profile-stats">
-            <span><strong className="profile-stat-val">{profile.following.length}</strong> Following</span>
-            <span><strong className="profile-stat-val">{profile.followers.length}</strong> Followers</span>
+            <span onClick={() => { setModalType("following"); setShowModal(true); }}>
+              <strong className="profile-stat-val">{profile.following.length}</strong> Following
+            </span>
+            <span onClick={() => { setModalType("followers"); setShowModal(true); }}>
+              <strong className="profile-stat-val">{profile.followers.length}</strong> Followers
+            </span>
           </div>
         </div>
 
@@ -470,6 +568,9 @@ export default function Profile() {
             </div>
          )}
       </div>
+
+      {/* Followers / Following Modal */}
+      {renderUserModal()}
     </div>
   );
 }
