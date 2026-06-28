@@ -153,8 +153,17 @@ export default function Profile() {
     if (!window.confirm("Delete this post?")) return;
     try {
       const res = await apiFetch(`/api/posts/${postId}`, { method: "DELETE" });
-      if (res.ok) { showToast("Post deleted"); refreshFeed(); }
-    } catch (e) { console.error(e); }
+      if (res.ok) {
+        showToast("Post deleted");
+        refreshFeed();
+      } else {
+        const d = await res.json();
+        showToast(d.error || d.err || "Failed to delete post", "error");
+      }
+    } catch (e) {
+      showToast("Network error", "error");
+      console.error(e);
+    }
   };
 
   const handleComment = async (e, postId) => {
