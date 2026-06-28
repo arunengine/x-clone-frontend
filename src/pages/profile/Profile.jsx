@@ -118,6 +118,19 @@ export default function Profile() {
     } catch (e) { console.error(e); }
   };
 
+  const handleRemoveFollower = async (followerId) => {
+    try {
+      const res = await apiFetch(`/api/users/remove-follower/${followerId}`, { method: "DELETE" });
+      if (res.ok) {
+        showToast("Follower removed");
+        refreshProfile();
+      } else {
+        const d = await res.json();
+        showToast(d.error || "Failed to remove", "error");
+      }
+    } catch (e) { showToast("Network error", "error"); }
+  };
+
   const handleFollowSuggested = async (id) => {
     try {
       const res = await apiFetch(`/api/users/follow/${id}`, { method: "POST" });
@@ -293,10 +306,23 @@ export default function Profile() {
                         </div>
                       </div>
                       {!isOwnUser && myUserId && (
-                        <button onClick={() => handleFollowModalUser(uid)} className="btn-primary"
-                          style={{ padding: "6px 14px", fontSize: "13px", fontWeight: "700", backgroundColor: isFollowing ? "transparent" : "var(--text-primary)", color: isFollowing ? "var(--text-primary)" : "var(--bg-color)", border: isFollowing ? "1px solid var(--border-color)" : "none" }}>
-                          {isFollowing ? "Unfollow" : "Follow"}
-                        </button>
+                        <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
+                          {/* Show Remove button only on YOUR own followers list */}
+                          {modalType === "followers" && isOwnProfile && (
+                            <button
+                              onClick={() => handleRemoveFollower(uid)}
+                              className="btn-outline"
+                              style={{ padding: "6px 12px", fontSize: "13px", fontWeight: "700", color: "var(--error-color)", borderColor: "var(--error-color)" }}
+                            >
+                              Remove
+                            </button>
+                          )}
+                          {/* Show Follow/Unfollow for everyone */}
+                          <button onClick={() => handleFollowModalUser(uid)} className="btn-primary"
+                            style={{ padding: "6px 14px", fontSize: "13px", fontWeight: "700", backgroundColor: isFollowing ? "transparent" : "var(--text-primary)", color: isFollowing ? "var(--text-primary)" : "var(--bg-color)", border: isFollowing ? "1px solid var(--border-color)" : "none" }}>
+                            {isFollowing ? "Unfollow" : "Follow"}
+                          </button>
+                        </div>
                       )}
                     </div>
                   );
