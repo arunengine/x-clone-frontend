@@ -3,6 +3,7 @@ import Signup from './pages/auth/Signup'
 import Login from './pages/auth/Login'
 import Home from './pages/home/Home'
 import Profile from './pages/profile/Profile'
+import Notifications from './pages/notifications/Notifications'
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/profile/:username' element={<Profile />} />
+        <Route path='/notifications' element={<Notifications />} />
         <Route path='/signup' element={<Signup />} />
         <Route path='/login' element={<Login />} />
       </Routes>
