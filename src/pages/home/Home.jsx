@@ -67,13 +67,13 @@ export default function Home() {
     return () => clearTimeout(t);
   }, [searchQuery]);
 
-  const fetchPosts = async () => {
-    setLoadingPosts(true);
+  const fetchPosts = async (silent = false) => {
+    if (!silent) setLoadingPosts(true);
     try {
       const res = await apiFetch("/api/posts/all");
       if (res.ok) setPosts(await res.json());
     } catch (e) { console.error(e); }
-    finally { setLoadingPosts(false); }
+    finally { if (!silent) setLoadingPosts(false); }
   };
 
   const fetchSuggested = async () => {
@@ -116,7 +116,7 @@ export default function Home() {
       if (res.ok) {
         setText(""); setImgFile(null); setImgPreview(null);
         showToast("Post published!");
-        fetchPosts();
+        fetchPosts(true); // silent — no skeleton flash
       } else {
         const d = await res.json();
         showToast(d.err || "Failed to post", "error");
@@ -131,7 +131,7 @@ export default function Home() {
       if (res.ok) {
         const d = await res.json();
         showToast(d.message?.includes("unlike") ? "Unliked" : "❤️ Liked!");
-        fetchPosts();
+        fetchPosts(true); // silent — no skeleton flash
       }
     } catch (e) { console.error(e); }
   };
@@ -142,7 +142,7 @@ export default function Home() {
       const res = await apiFetch(`/api/posts/${postId}`, { method: "DELETE" });
       if (res.ok) {
         showToast("Post deleted");
-        fetchPosts();
+        fetchPosts(true); // silent — no skeleton flash
       } else {
         const d = await res.json();
         showToast(d.error || d.err || "Failed to delete post", "error");
@@ -159,7 +159,7 @@ export default function Home() {
       if (res.ok) {
         const d = await res.json();
         showToast(d.message === "unfollowed" ? "Unfollowed" : "Following!");
-        fetchSuggested(); fetchPosts();
+        fetchSuggested(); fetchPosts(true); // silent — no skeleton flash
       }
     } catch (e) { console.error(e); }
   };
@@ -173,7 +173,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: commentText })
       });
-      if (res.ok) { setCommentText(""); showToast("Reply posted!"); fetchPosts(); }
+      if (res.ok) { setCommentText(""); showToast("Reply posted!"); fetchPosts(true); } // silent
     } catch (e) { console.error(e); }
   };
 
@@ -186,7 +186,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: replyText, parentId: parentCommentId, replyToUsername })
       });
-      if (res.ok) { setReplyText(""); setActiveReplyCommentId(null); showToast("Reply posted!"); fetchPosts(); }
+      if (res.ok) { setReplyText(""); setActiveReplyCommentId(null); showToast("Reply posted!"); fetchPosts(true); } // silent
     } catch (e) { console.error(e); }
   };
 
