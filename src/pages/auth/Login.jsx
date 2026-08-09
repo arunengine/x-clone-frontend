@@ -50,29 +50,37 @@ export default function Login() {
     setError(null);
     setLoading(true);
 
-    try {
-      const response = await fetch(`${API}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // sends the JWT cookie
-        body: JSON.stringify({ username, password }),
-      });
+    const attemptLogin = async (retriesLeft = 1) => {
+      try {
+        const response = await fetch(`${API}/api/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include", // sends the JWT cookie
+          body: JSON.stringify({ username, password }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (!response.ok) {
-        // Bad credentials — show the error message from server
-        setError(data.error || "Login failed. Check your username and password.");
-        return;
+        if (!response.ok) {
+          // Bad credentials — show the error message from server
+          setError(data.error || "Login failed. Check your username and password.");
+          setLoading(false);
+          return;
+        }
+
+        // Success — go to the home feed
+        navigate("/");
+      } catch (err) {
+        if (retriesLeft > 0) {
+          setTimeout(() => attemptLogin(retriesLeft - 1), 800);
+        } else {
+          setError("Could not connect to server. Please try again.");
+          setLoading(false);
+        }
       }
+    };
 
-      // Success — go to the home feed
-      navigate("/");
-    } catch (err) {
-      setError("Could not connect to server. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    attemptLogin();
   };
 
   return (
