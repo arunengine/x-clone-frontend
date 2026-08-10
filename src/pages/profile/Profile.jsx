@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, showToast } from "../../components/Toast";
 import PostSkeleton from "../../components/PostSkeleton";
+import Navbar from "../../components/Navbar";
 import { timeAgo } from "../../utils/timeAgo";
 import {
   Home as HomeIcon, User as UserIcon, LogOut, MessageCircle,
@@ -544,14 +545,13 @@ export default function Profile() {
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <div className="layout">
-      {/* Left sidebar */}
-      <div className="sidebar">
-        <h2>X Clone</h2>
-        <Link to="/" className="sidebar-link"><HomeIcon size={22} /> Home</Link>
-        {myUsername && <Link to={`/profile/${myUsername}`} className="sidebar-link"><UserIcon size={22} /> Profile</Link>}
-        <Link to="/notifications" className="sidebar-link"><Bell size={22} /> Notifications</Link>
-        <button onClick={handleLogout} className="sidebar-btn"><LogOut size={18} /> Log out</button>
-      </div>
+      {/* Responsive Navigation */}
+      <Navbar
+        currentTab="profile"
+        myUsername={myUsername}
+        unreadCount={0}
+        onLogout={handleLogout}
+      />
 
       {/* Main profile content */}
       <div className="main-content">

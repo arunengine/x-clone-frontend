@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, showToast } from "../../components/Toast";
 import PostSkeleton from "../../components/PostSkeleton";
+import Navbar from "../../components/Navbar";
 import { timeAgo } from "../../utils/timeAgo";
 import {
   Home as HomeIcon, User as UserIcon, LogOut, MessageCircle,
@@ -420,21 +421,13 @@ export default function Home() {
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <div className="layout">
-      {/* Left Sidebar */}
-      <div className="sidebar">
-        <h2>X Clone</h2>
-        <Link to="/" className="sidebar-link"><HomeIcon size={22} /> Home</Link>
-        {myUsername && (
-          <Link to={`/profile/${myUsername}`} className="sidebar-link">
-            <UserIcon size={22} /> Profile
-          </Link>
-        )}
-        <div className="sidebar-link-wrapper">
-          <Link to="/notifications" className="sidebar-link"><Bell size={22} /> Notifications</Link>
-          {unreadCount > 0 && <span className="notif-badge">{unreadCount > 9 ? "9+" : unreadCount}</span>}
-        </div>
-        <button onClick={handleLogout} className="sidebar-btn"><LogOut size={18} /> Log out</button>
-      </div>
+      {/* Responsive Navigation (Sidebar on Desktop, Top & Bottom Nav on Mobile) */}
+      <Navbar
+        currentTab="home"
+        myUsername={myUsername}
+        unreadCount={unreadCount}
+        onLogout={handleLogout}
+      />
 
       {/* Center Feed */}
       <div className="main-content">

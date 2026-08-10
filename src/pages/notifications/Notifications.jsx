@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, showToast } from "../../components/Toast";
+import Navbar from "../../components/Navbar";
 import { timeAgo } from "../../utils/timeAgo";
 import { Home as HomeIcon, User as UserIcon, LogOut, Bell, Trash2 } from "lucide-react";
 
@@ -69,20 +70,17 @@ export default function Notifications() {
     return `https://api.dicebear.com/7.x/adventurer/svg?seed=${user?.username || "default"}`;
   };
 
+  const unreadCount = notifications.filter(n => !n.read).length;
+
   return (
     <div className="layout">
-      {/* Left sidebar navigation */}
-      <div className="sidebar">
-        <h2>X Clone</h2>
-        <Link to="/" className="sidebar-link"><HomeIcon size={22} /> Home</Link>
-        {myUsername && <Link to={`/profile/${myUsername}`} className="sidebar-link"><UserIcon size={22} /> Profile</Link>}
-        <Link to="/notifications" className="sidebar-link" style={{ color: "var(--accent-color)" }}>
-          <Bell size={22} /> Notifications
-        </Link>
-        <button onClick={handleLogout} className="sidebar-btn">
-          <LogOut size={18} /> Log out
-        </button>
-      </div>
+      {/* Responsive Navigation */}
+      <Navbar
+        currentTab="notifications"
+        myUsername={myUsername}
+        unreadCount={unreadCount}
+        onLogout={handleLogout}
+      />
 
       {/* Main content area */}
       <div className="main-content">

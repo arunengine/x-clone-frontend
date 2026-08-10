@@ -1021,3 +1021,398 @@ input, textarea {
 .toolbar-icon-btn:hover {
   background: rgba(29,155,240,0.12);
 }
+
+/* ===== RESPONSIVE NAVIGATION & BREAKPOINTS ===== */
+
+/* Base word wrapping for post content and titles */
+.post-author,
+.post-username,
+.post-text,
+.notification-body,
+.profile-fullname,
+.profile-username,
+.profile-bio,
+.modal-fullname,
+.modal-username,
+.modal-bio,
+.suggested-fullname,
+.suggested-username {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Mobile top and bottom navigation defaults */
+.mobile-top-header {
+  display: none;
+}
+
+.mobile-bottom-nav {
+  display: none;
+}
+
+/* Tablet responsive adjustments (641px - 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .layout {
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  .sidebar {
+    width: 80px;
+    padding: 12px 8px;
+    align-items: center;
+  }
+
+  .sidebar h2 {
+    font-size: 20px;
+    padding: 10px 0;
+    text-align: center;
+  }
+
+  .sidebar-link {
+    font-size: 0; /* Hide text label on tablet, keep icon visible */
+    padding: 12px;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+  }
+
+  .sidebar-link svg {
+    margin: 0;
+  }
+
+  .sidebar-btn {
+    font-size: 0;
+    padding: 12px;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+  }
+
+  .sidebar-btn svg {
+    margin: 0;
+  }
+
+  .sidebar-link-wrapper {
+    justify-content: center;
+  }
+
+  .sidebar-link-wrapper .notif-badge {
+    left: 28px;
+    top: -2px;
+  }
+
+  .main-content {
+    flex: 1;
+    max-width: 600px;
+  }
+}
+
+/* Mobile responsive adjustments (<= 640px) */
+@media (max-width: 640px) {
+  html, body {
+    overflow-x: hidden;
+  }
+
+  .layout {
+    width: 100%;
+    max-width: 100%;
+    flex-direction: column;
+    margin: 0;
+    padding-bottom: 64px;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    display: none !important;
+  }
+
+  /* Mobile Sticky Header */
+  .mobile-top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    width: 100%;
+  }
+
+  .mobile-logo {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent-color);
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+
+  .mobile-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mobile-avatar-link,
+  .mobile-icon-btn {
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 50%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .mobile-avatar-link:hover,
+  .mobile-icon-btn:hover {
+    background-color: var(--bg-hover);
+    color: var(--error-color);
+  }
+
+  /* Mobile Fixed Bottom Navigation */
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 58px;
+    background-color: rgba(0, 0, 0, 0.94);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border-color);
+    z-index: 1000;
+    justify-content: space-around;
+    align-items: center;
+    padding: 4px 0;
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    gap: 2px;
+    flex: 1;
+    text-align: center;
+    padding: 4px 0;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .mobile-nav-item.active,
+  .mobile-nav-item:hover {
+    color: var(--accent-color);
+  }
+
+  .mobile-nav-item.nav-btn:hover {
+    color: var(--error-color);
+  }
+
+  .mobile-nav-item-wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+  .mobile-badge {
+    position: absolute;
+    top: -2px;
+    right: 22%;
+    background: var(--error-color);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    border-radius: 9999px;
+    min-width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+  }
+
+  /* Main Feed & Content */
+  .main-content {
+    width: 100%;
+    max-width: 100%;
+    border-right: none;
+    min-height: calc(100vh - 120px);
+  }
+
+  .main-header {
+    padding: 12px 16px;
+  }
+
+  .main-header h3 {
+    font-size: 17px;
+  }
+
+  /* Create Post Box */
+  .create-post-container {
+    padding: 12px 14px;
+  }
+
+  .create-post-textarea {
+    font-size: 16px;
+    height: 70px;
+  }
+
+  .create-post-footer {
+    padding-top: 10px;
+  }
+
+  /* Post Cards */
+  .post-card {
+    padding: 12px 14px;
+    width: 100%;
+  }
+
+  .post-avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .post-header {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .post-author {
+    font-size: 15px;
+  }
+
+  .post-username {
+    font-size: 13px;
+  }
+
+  .post-text {
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  .post-image {
+    max-height: 280px;
+    border-radius: 12px;
+  }
+
+  .interaction-bar {
+    gap: 16px;
+    justify-content: space-around;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  .interaction-icon {
+    padding: 6px 10px;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  /* Comments section on mobile */
+  .comments-list {
+    margin-top: 12px;
+    gap: 10px;
+  }
+
+  .comment-item {
+    gap: 8px;
+  }
+
+  .nested-replies {
+    margin-left: 14px;
+    padding-left: 10px;
+    gap: 10px;
+  }
+
+  .reply-form-inline {
+    margin-left: 14px;
+  }
+
+  /* Profile page on mobile */
+  .profile-cover {
+    height: 120px;
+  }
+
+  .profile-avatar-container {
+    margin-top: -45px;
+    padding: 0 14px;
+  }
+
+  .profile-avatar {
+    width: 84px;
+    height: 84px;
+    border-width: 3px;
+  }
+
+  .profile-info {
+    padding: 14px;
+  }
+
+  .profile-fullname {
+    font-size: 19px;
+  }
+
+  .profile-username {
+    font-size: 14px;
+  }
+
+  .profile-bio {
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  .profile-stats {
+    gap: 14px;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+
+  .profile-tab {
+    padding: 12px 0;
+    font-size: 14px;
+  }
+
+  /* Notifications page on mobile */
+  .notification-item {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .notification-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .notification-body {
+    font-size: 14px;
+    padding-top: 4px;
+  }
+
+  /* Modals on mobile */
+  .modal-container {
+    width: 92%;
+    max-height: 85vh;
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 12px 16px;
+  }
+
+  .modal-content {
+    padding: 14px;
+  }
+}
